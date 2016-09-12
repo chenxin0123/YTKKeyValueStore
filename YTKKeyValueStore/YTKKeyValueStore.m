@@ -67,6 +67,7 @@ static NSString *const DELETE_ITEMS_WITH_PREFIX_SQL = @"DELETE from %@ where id 
 
 static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
 
+///表名是否合法
 + (BOOL)checkTableName:(NSString *)tableName {
     if (tableName == nil || tableName.length == 0 || [tableName rangeOfString:@" "].location != NSNotFound) {
         debugLog(@"ERROR, table name: %@ format error.", tableName);
@@ -79,6 +80,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return [self initDBWithName:DEFAULT_DB_NAME];
 }
 
+///数据库存放在Document目录下
 - (id)initDBWithName:(NSString *)dbName {
     self = [super init];
     if (self) {
@@ -92,6 +94,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return self;
 }
 
+///指定路径
 - (id)initWithDBWithPath:(NSString *)dbPath {
     self = [super init];
     if (self) {
@@ -104,6 +107,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return self;
 }
 
+///建表 首先检查表名
 - (void)createTableWithName:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -118,6 +122,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///表是否存在
 - (BOOL)isTableExists:(NSString *)tableName{
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return NO;
@@ -132,6 +137,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return result;
 }
 
+///清除表内容
 - (void)clearTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -146,6 +152,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///删除表
 - (void)dropTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -160,6 +167,8 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///object可以是字典、数组
+///将整个字典或者data转为json字符串 存入数据库 使用REPLACE INTO
 - (void)putObject:(id)object withId:(NSString *)objectId intoTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -191,6 +200,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///先从数据库拿出json字符串再转为json对象 使用YTKKeyValueItem包装返回
 - (YTKKeyValueItem *)getYTKKeyValueItemById:(NSString *)objectId fromTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return nil;
@@ -256,6 +266,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return nil;
 }
 
+///取出所有数据
 - (NSArray *)getAllItemsFromTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return nil;
@@ -288,6 +299,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return result;
 }
 
+///记录数量
 - (NSUInteger)getCountFromTable:(NSString *)tableName
 {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
@@ -305,6 +317,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     return num;
 }
 
+///删除某个id
 - (void)deleteObjectById:(NSString *)objectId fromTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -319,6 +332,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///删除数组中的id
 - (void)deleteObjectsByIdArray:(NSArray *)objectIdArray fromTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
@@ -343,6 +357,7 @@ static NSString *const DROP_TABLE_SQL = @" DROP TABLE '%@' ";
     }
 }
 
+///删除以objectIdPrefix开头的id
 - (void)deleteObjectsByIdPrefix:(NSString *)objectIdPrefix fromTable:(NSString *)tableName {
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
